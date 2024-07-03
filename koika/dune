@@ -1,0 +1,7 @@
+(coq.theory
+ (name koika)
+ (modules :standard)
+ (theories Ltac2 Koika Sail bbv)
+)
+
+(dirs :standard _objects)

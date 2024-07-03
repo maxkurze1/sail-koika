@@ -1,0 +1,7 @@
+(coq.theory
+ (name proof)
+ (modules :standard)
+ (theories Koika Sail bbv koika sail)
+)
+
+(dirs :standard _objects)

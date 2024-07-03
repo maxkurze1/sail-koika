@@ -1,0 +1,4 @@
+-R _build/default/tcu/ tcu
+-R _build/default/sail/ sail
+-R _build/default/koika/ koika
+-R _build/default/proof/ proof
