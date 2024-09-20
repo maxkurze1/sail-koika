@@ -55,6 +55,10 @@ Definition concat_str_dec (str : string) (x : Z) : string := String.append str (
 
 Definition zero_extend' {n : Z} (m : Z) (v : mword n) (*m >=? n*) : mword m := zero_extend v m.
 
+Definition some_func (value : mword 32) : M (mword 32) :=
+   ((read_reg SOME_REG_ref)  : M (mword 32)) >>= fun (w__0 : mword 32) =>
+   returnM (add_vec value w__0).
+
 Definition addition (value : mword 32) : mword 32 := add_vec_int value 57.
 
 Definition reading '(tt : unit) : M (mword 32) :=

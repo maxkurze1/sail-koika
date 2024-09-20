@@ -36,6 +36,13 @@ Definition r (reg : reg_t) : R reg :=
   | ANOTHER_REG => {{ |16b~ 0x1234| }}
   end.
 
+Definition some_func : UInternalFunction reg_t empty_ext_fn_t :=
+{{
+fun some_func (value: bits_t 32) : bits_t 32 =>
+  value + read0(SOME_REG)
+}}.
+Definition some_func_tc := (tc_function R empty_Sigma some_func).
+
 Definition addition {reg_t} : UInternalFunction reg_t empty_ext_fn_t :=
 {{
 fun addition (value: bits_t 32) : bits_t 32 =>
@@ -69,4 +76,33 @@ Definition combining : UInternalFunction reg_t empty_ext_fn_t :=
 fun combining () : unit_t =>
   write0(SOME_REG, addition(reading()))
 }}.
+
 Definition combining_tc := (tc_function R empty_Sigma combining).
+ 
+(* Theorem combining_splitted :
+  forall (env : ContextEnv.(env_t) koika.R) Gamma Gamma' sched_log action_log action_log' out,
+  interp_action env empty_sigma Gamma sched_log action_log combining_tc
+    = Some(action_log', out, Gamma').
+Proof.
+  intros.
+  unfold combining_tc, combining.
+  unfold int_argspec, int_retSig, int_body.
+  Unset Printing Notations.
+  cbv delta [interp_action] beta. cbv fix. simpl.
+
+  simpl (extract_success _).
+  Opaque USugar.
+  cbv beta.
+
+
+  lazy delta [desugar_action desugar_action'].
+  lazy fix match beta iota zeta.
+  eval compute in (desugar_action _ _).
+  unfold desugar_action, desugar_action'.
+  simpl.
+  cbv fix.
+  simpl (desugar_action' _ _ _ _).
+  unfold TypeInference.tc_action.
+
+  unfold int_body.
+  unfold desugar_action. *)

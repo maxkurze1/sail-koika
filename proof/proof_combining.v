@@ -24,7 +24,39 @@ Definition koika_env_idk  :=
 
 Definition koika_unit := Bits.nil.
 
-Theorem combining_equality :
+Ltac simpl_koika_sail :=
+  unfold koika_eval, sail_eval.
+  (* repeat match goal with
+  | _ => progress 
+  | _ => progress unfold sail_eval
+  end. *)
+
+Print koika.combining_tc.
+Print koika.combining.
+
+
+(* Lemma interp_single : 
+  forall r input R,
+  interp_action r empty_sigma input log_empty log_empty
+    (tc_function R empty_Sigma 
+      
+    )
+       (extract_success
+          (TypeInference.tc_action koika.R empty_Sigma dummy_pos nil
+            (bits_t 0)
+            (desugar_action dummy_pos
+               (UWrite P0 koika.SOME_REG
+                  (USugar
+                     (UCallModule id Lift_self koika.addition
+                        (cons
+                           (USugar
+                              (UCallModule id Lift_self koika.reading nil))
+                           nil)))))) eq_refl) *)
+
+
+Locate interp_action.
+
+Theorem combining_equality:
   forall n1 n2 : nat,
 
   let sail_in := tt in
@@ -37,11 +69,10 @@ Theorem combining_equality :
   |} in
 
   let koika_r :=
-    ContextEnv.(create) (fun (reg : koika.reg_t) =>
-    match reg with
-    | koika.ANOTHER_REG => Bits.of_nat 16 n1
-    | koika.SOME_REG    => Bits.of_nat 32 n2
-    end : (koika.R reg)) in
+  (#{
+    koika.SOME_REG    => Bits.of_nat 32 n2;
+    koika.ANOTHER_REG => Bits.of_nat 16 n1
+  }# : context koika.R _ ) : ContextEnv.(env_t) koika.R in
 
   (* koika *)
   assert Some (koika_r', koika_out) := koika_eval koika_r koika.combining_tc koika_in in
@@ -54,9 +85,19 @@ Theorem combining_equality :
   sail_out = tt /\
   sail_koika_reg_eq sail_r' koika_r'.
 Proof.
-  intros n1 n2 sail_r koika_r.
-  cbn in koika_r.
-  unfold sail_eval, koika_eval.
+  intros n1 n2 sail_in koika_in sail_r koika_r.
+
+  simpl_koika_sail.
+  rewrite interp_action_cps_correct_rev.
+
+  unfold koika.combining_tc, koika.combining.
+  unfold int_argspec, int_retSig, int_body.
+  unfold koika.reading.
+
+  Unset Printing Notations.
+
+
+  (* cbn in koika_r. *)
   simpl (interp_action _ _ _ _ _ _).
   cbv match.
   cbn. simpl.

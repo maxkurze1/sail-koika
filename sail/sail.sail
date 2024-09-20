@@ -8,10 +8,16 @@ function zero_extend(m, v) = sail_zero_extend(v, m)
 register SOME_REG    : bits(32) = 0x00000401
 register ANOTHER_REG : bits(16) = 0x1234
 
+val some_func : bits(32) -> bits(32)
+function some_func (value) = {
+  value + SOME_REG
+}
+
 val addition : bits(32) -> bits(32)
 function addition(value) = {
   value + 57
 }
+
 val reading: unit -> bits(32)
 function reading() = {
   SOME_REG

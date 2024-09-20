@@ -2,7 +2,7 @@
   inputs = {
     nixpkgs.follows = "koika/nixpkgs";
     flake-utils.url = "github:numtide/flake-utils";
-    koika.url = "git+file:///home/samxamnam/Projects/koika";
+    koika.url = "git+file:///home/samxamnam/Projects/koika?ref=master";
     coq-sail.url = "github:maxkurze1/coq-sail";
     coq-bbv.url = "github:maxkurze1/bbv";
   };
@@ -38,7 +38,7 @@
             overlays = [
               # new 0.17.1 sail version
               (_: prev: {
-                ocamlPackages = prev.ocamlPackages.overrideScope' (_: ocaml_prev: {
+                ocamlPackages = prev.ocamlPackages.overrideScope (_: ocaml_prev: {
                   sail = ocaml_prev.sail.overrideAttrs
                     (old: rec {
                       version = "0.17.1";
@@ -75,7 +75,7 @@
       overlays.default = final: prev:
         (nixpkgs.lib.mapAttrs
           (_: scope:
-            scope.overrideScope' (self: _: {
+            scope.overrideScope (self: _: {
               sail-koika = self.callPackage SailKoikaPkg { };
             })
           )
